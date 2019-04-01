@@ -1,0 +1,29 @@
+#For MFA login, launch the Microsoft Exchange Online Remote PowerShell module
+
+# Exchange Online
+Connect-EXOPSSession -UserPrincipalName <email> 
+# Security & Compliance Center 
+Connect-IPPSSession -UserPrincipalName <email>
+
+# Connect to Office 365 Powershell
+Connect-MsolService
+# Azure AD login:
+Connect-AzureAD
+
+# For Skype management
+# install SFBOnline module from https://www.microsoft.com/en-us/download/confirmation.aspx?id=39366
+Import-Module MsOnline
+Connect-MsolService -Credential $credential
+Import-Module SkypeOnlineConnector
+$session = New-CsOnlineSession -Credential $UserCredential -Verbose -SessionOption $proxysettings
+
+
+
+# if not using MS EOL Powershell:
+$UserCredential = Get-Credential
+$proxysettings = New-PSSessionOption -ProxyAccessType IEConfig
+$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection -SessionOption $proxysettings
+Import-PSSession $Session
+
+#Remove-PSSession $Session
+Get-PSSession | Remove-PSSession
